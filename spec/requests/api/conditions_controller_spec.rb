@@ -10,7 +10,7 @@ describe "/api/conditions", type: :request do
     it "creates a new condition with the expected params" do
       subject
       response_json = JSON.parse(response.body)
-      expect(Condition.find(response_json["id"]).foruma).to eq(formula)
+      expect(Condition.find(response_json["id"]).formula).to eq(formula)
     end
   end
 
