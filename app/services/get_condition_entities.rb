@@ -13,14 +13,14 @@ class GetConditionEntities < ApplicationService
 
   def call
     base_object = GetConditionBaseObject.call(condition)
-    strategy = STRATEGIES[base_object]
+    strategy = STRATEGIES[base_object.to_sym]
 
-    validate_absent_strategy!(strategy)
+    validate_absent_strategy!(base_object, strategy)
 
     strategy.call(condition)
   end
 
-  def validate_absent_strategy!(strategy)
+  def validate_absent_strategy!(base_object, strategy)
     if strategy.nil?
       raise StandardError.new("The base object (#{base_object}) is unknown")
     end
