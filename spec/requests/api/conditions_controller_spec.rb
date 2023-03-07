@@ -74,6 +74,15 @@ describe "/api/conditions", type: :request do
       end
     end
 
+    context "when base object is unknown" do
+      let(:formula) { "Something.id == 1" }
+
+      it "does not return OK response" do
+        subject
+        expect(response).to_not have_http_status(:ok)
+      end
+    end
+
     context "when formula base object is contract" do
       let(:formula) { "Contract.name == '#{example_contract.name}'" }
 
@@ -82,8 +91,8 @@ describe "/api/conditions", type: :request do
 
         results = JSON.parse(response.body).map(&:with_indifferent_access)
         results.each do |result|
-          expect(contract_dto[:id]).to eq(example_contract.id)
-          expect(contract_dto[:name]).to eq(example_contract.name)
+          expect(result[:id]).to eq(example_contract.id)
+          expect(result[:name]).to eq(example_contract.name)
         end
       end
     end
