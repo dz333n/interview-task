@@ -7,7 +7,7 @@ describe "/api/conditions", type: :request do
 
     subject { post "/api/conditions", params: params }
 
-    it "creates a new condition" do
+    it "creates a new condition with the expected params" do
       subject
       response_json = JSON.parse(response.body)
       expect(Condition.find(response_json["id"]).foruma).to eq(formula)
@@ -49,7 +49,7 @@ describe "/api/conditions", type: :request do
       end
     end
 
-    conext "when there were samples samples met the same condition" do
+    context "when there were samples samples met the same condition" do
       let(:same_condition_contract) do
         Contract.create!(
           user: User.create!(email: Faker::Internet.email),
