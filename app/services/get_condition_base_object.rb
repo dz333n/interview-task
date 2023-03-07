@@ -1,4 +1,4 @@
-class GetconditionBaseObject < ApplicationService
+class GetConditionBaseObject < ApplicationService
   attr_reader :condition
 
   def initialize(condition)
