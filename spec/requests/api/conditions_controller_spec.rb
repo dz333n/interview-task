@@ -40,11 +40,38 @@ describe "/api/conditions", type: :request do
       get "/api/conditions/#{condition.id}/entities"
     end
 
-    it "returns sample contract user dto" do
+    it "returns sample contract user dtos" do
       subject
-      user_dto = JSON.parse(response.body).with_indifferent_access
-      expect(user_dto[:id]).to eq(example_contract.user.id)
-      expect(user_dto[:email]).to eq(example_contract.user.email)
+      results = JSON.parse(response.body).map(&:with_indifferent_access)
+      results.each do |result|
+        expect(result[:id]).to eq(example_contract.user.id)
+        expect(result[:email]).to eq(example_contract.user.email)
+      end
+    end
+
+    conext "when there were samples samples met the same condition" do
+      let(:same_condition_contract) do
+        Contract.create!(
+          user: User.create!(email: Faker::Internet.email),
+          supplier: Supplier.create!(spend: example_contract.supplier.spend),
+          name: example_contract.name
+        )
+      end
+
+      before(:each) { same_condition_contract }
+
+      it "returns these users too" do
+        subject
+        results = JSON.parse(response.body).map(&:with_indifferent_access)
+        expected_contracts = [example_contract, same_condition_contract]
+        expected_user_ids = expected_contracts.map(&:user_id)
+        expected_emails = expected_contracts.map(&:user).map(&:email)
+
+        results.each do |result|
+          expect(expected_user_ids.include?(result[:id])).to be_truthy
+          expect(expected_emails.include?(result[:email])).to be_truthy
+        end
+      end
     end
 
     context "when formula base object is contract" do
@@ -52,9 +79,12 @@ describe "/api/conditions", type: :request do
 
       it "returns sample contract dto" do
         subject
-        contract_dto = JSON.parse(response.body).with_indifferent_access
-        expect(contract_dto[:id]).to eq(example_contract.id)
-        expect(contract_dto[:name]).to eq(example_contract.name)
+
+        results = JSON.parse(response.body).map(&:with_indifferent_access)
+        results.each do |result|
+          expect(contract_dto[:id]).to eq(example_contract.id)
+          expect(contract_dto[:name]).to eq(example_contract.name)
+        end
       end
     end
 
@@ -63,9 +93,12 @@ describe "/api/conditions", type: :request do
 
       it "returns sample contract supplier dto" do
         subject
-        supplier_dto = JSON.parse(response.body).with_indifferent_access
-        expect(contract_dto[:id]).to eq(example_contract.supplier.id)
-        expect(contract_dto[:spend]).to eq(example_contract.supplier.spend)
+
+        results = JSON.parse(response.body).map(&:with_indifferent_access)
+        results.each do |result|
+          expect(result[:id]).to eq(example_contract.supplier.id)
+          expect(result[:spend]).to eq(example_contract.supplier.spend)
+        end
       end
     end
   end
