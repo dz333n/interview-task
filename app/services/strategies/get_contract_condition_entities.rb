@@ -7,6 +7,11 @@ module Strategies
     end
 
     def call
+      PerformStrategyQuery.call(
+        base_relation: Contract,
+        includes: %i[user supplier],
+        condition: condition
+      )
     end
   end
 end
