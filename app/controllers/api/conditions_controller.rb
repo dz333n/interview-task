@@ -6,10 +6,12 @@ module Api
     end
 
     def entities
-      condition = Condition.find!(params[:condition_id])
+      condition = Condition.find(params[:condition_id])
       entities = GetConditionEntities.call(condition)
 
       render json: entities
+    rescue StandardError => e
+      render json: { message: e.message }, status: :unprocessable_entity
     end
   end
 end
