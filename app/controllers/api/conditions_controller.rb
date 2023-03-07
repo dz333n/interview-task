@@ -7,7 +7,7 @@ module Api
 
     def entities
       condition = Condition.find!(params[:condition_id])
-      entities = GetConditionEntities.call(condition: condition)
+      entities = GetConditionEntities.call(condition)
 
       render json: entities
     end
